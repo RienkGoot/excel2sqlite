@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="panel panel-primary panel-center">
+            <div class="panel-heading">
+                <h3 class="panel-title">Importeren</h3>
+            </div>
+            <div class="panel-body">
+                {% include ('::flash-messages.html.twig') %}
+                {#<div class="input-group file-preview">
+                    <input placeholder="Nog geen bestand gekozen." type="text" class="form-control file-preview-filename" disabled="disabled">
+                    <span class="input-group-btn">
+						<button type="button" class="btn btn-default file-preview-clear" style="display:none;"> <span class="glyphicon glyphicon-remove"></span> Clear </button>
+						<div class="btn btn-default file-preview-input"> <span class="glyphicon glyphicon-folder-open"></span> <span class="file-preview-input-title">Bestand kiezen</span>
+							<input type="file" accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="input-file-preview"/>
+						</div>
+						<button type="button" class="btn btn-labeled btn-primary"> <span class="btn-label"><i class="glyphicon glyphicon-upload"></i> </span>Importeren</button>
+                    </span>
+                </div>#}
+                <form action="#" method="post" enctype="multipart/form-data">
+                    Select image to upload:
+                    <input type="file" accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="excelFile" id="excelFile">
+                    <input type="submit" value="Upload File" name="submit">
+                </form>
+                <hr>
+
+                <!-- Progress Bar -->
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"> <span class="sr-only">60% Complete</span> </div>
+                </div>
+                <br />
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="panel panel-primary panel-center">
+            <div class="panel-heading">
+                <h3 class="panel-title">Bestandsoverzicht</h3>
+                <div class="pull-right button-panel">
+                    <a href="{{ path('import') }}" class="btn btn-sm btn-default" ><span class="glyphicon glyphicon-upload"></span> Importeren</a>
+                </div>
+            </div>
+            <div class="panel-body">
+                <h4 class="text-center">Overzicht</h4>
+                <hr>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Naam</th>
+                        <th>Datum</th>
+                        <th>Acties</th>
+                    </tr>
+                    </thead>
+                    <tr>
+                        <td>HAP412-301.B1.015</td>
+                        <td>12-6-2017</td>
+                        <td>
+                            <a><i class="glyphicon glyphicon-download"></i></a>
+                            <a><i class="glyphicon glyphicon-eye-open"></i></a>
+                            <a><i class="glyphicon glyphicon-remove"></i></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
