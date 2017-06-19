@@ -34,29 +34,26 @@ class ImportController extends Controller
                     $file = $_FILES["excelFile"]["tmp_name"];
 
                     $objPHPExcel = PHPExcel_IOFactory::load($file);
+                    $dataArr = array();
+
                     foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
                         $worksheetTitle     = $worksheet->getTitle();
                         $highestRow         = $worksheet->getHighestRow(); // e.g. 10
                         $highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
                         $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
-                        $nrColumns = ord($highestColumn) - 64;
-                        echo "<br>The worksheet ".$worksheetTitle." has ";
-                        echo $nrColumns . ' columns (A-' . $highestColumn . ') ';
-                        echo ' and ' . $highestRow . ' row.';
-                        echo '<br>Data: <table border="1"><tr>';
+
                         for ($row = 1; $row <= $highestRow; ++ $row) {
-                            echo '<tr>';
                             for ($col = 0; $col < $highestColumnIndex; ++ $col) {
                                 $cell = $worksheet->getCellByColumnAndRow($col, $row);
-                                $val = $cell->getCalculatedValue();
-                                $dataType = PHPExcel_Cell_DataType::dataTypeForValue($val);
-                                echo '<td>' . $val . '<br>(Typ ' . $dataType . ')</td>';
-                            }
-                            echo '</tr>';
-                        }
-                        echo '</table>';
-                    }
+                                $val = $cell->getValue();
+                                $dataArr[$row][$col] = $val;
 
+                            }
+                        }
+                    }
+                    foreach($dataArr as $val){
+                        echo $val['0'];
+                    }
 
                 } else {
                     $this->addFlash('warning', 'Kies een excel bestand.');

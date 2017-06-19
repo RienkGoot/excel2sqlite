@@ -5,12 +5,12 @@ namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Import
+ * SalesOrders
  *
- * @ORM\Table(name="import")
- * @ORM\Entity(repositoryClass="AppBundle\Repository\ImportRepository")
+ * @ORM\Table(name="salesorders")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\SalesOrdersRepository")
  */
-class Import
+class SalesOrders
 {
     /**
      * @var int
@@ -22,9 +22,9 @@ class Import
     private $id;
 
     /**
-     * @var \DateTime
+     * @var int
      *
-     * @ORM\Column(name="orderdate", type="datetime")
+     * @ORM\Column(name="orderdate", type="integer")
      */
     private $orderdate;
 
