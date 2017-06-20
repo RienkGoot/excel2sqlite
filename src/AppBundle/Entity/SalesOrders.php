@@ -22,9 +22,9 @@ class SalesOrders
     private $id;
 
     /**
-     * @var int
+     * @var float
      *
-     * @ORM\Column(name="orderdate", type="integer")
+     * @ORM\Column(name="orderdate", type="float")
      */
     private $orderdate;
 
