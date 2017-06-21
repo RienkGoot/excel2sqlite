@@ -9,6 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use PHPExcel;
 use PHPExcel_IOFactory;
+use Doctrine\DBAL\Driver\Connection;
+
 
 /**
  * Class ImportController
@@ -21,47 +23,75 @@ class ImportController extends Controller
     /**
      * @Route("import", name="import")
      * @param Request $request
+     * @param Connection $conn
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction(Request $request)
+
+    public function indexAction(Request $request, Connection $conn)
     {
         if(isset($_POST["submit"])) {
             if(!empty($_FILES["excelFile"]["tmp_name"])) {
-                $fileName = ($_FILES["excelFile"]["name"]);
-                $ext = substr($fileName, strrpos($fileName, '.') + 1);
-                if ($ext == "xlsx" || $ext == "csv") {
-                    $this->addFlash('success', 'Importeren...');
+
+                $file = ($_FILES["excelFile"]["name"]);
+                $ext = substr($file, strrpos($file, '.') + 1);
+                // Check filetype matches .xlsx or .xls
+                if ($ext == "xlsx" || $ext == "xls") {
                     $file = $_FILES["excelFile"]["tmp_name"];
-
+                    // Load uploaded file
                     $objPHPExcel = PHPExcel_IOFactory::load($file);
-                    $dataArr = array();
 
+
+                    $dataArr = array();
                     foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
-                        $worksheetTitle     = $worksheet->getTitle();
-                        $highestRow         = $worksheet->getHighestRow(); // e.g. 10
-                        $highestColumn      = $worksheet->getHighestColumn(); // e.g 'F'
+
+                        $worksheet = $objPHPExcel->getSheet(0);
+                        $highestRow = $worksheet->getHighestRow(); // e.g. 10
+                        $highestColumn = $worksheet->getHighestColumn(); // e.g 'F'
                         $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
 
-                        for ($row = 1; $row <= $highestRow; ++ $row) {
-                            for ($col = 0; $col < $highestColumnIndex; ++ $col) {
+                        for ($row = 1; $row <= $highestRow; ++$row) {
+                            echo '<tr>';
+                            for ($col = 0; $col < $highestColumnIndex; ++$col) {
                                 $cell = $worksheet->getCellByColumnAndRow($col, $row);
-                                $val = $cell->getValue();
+                                $val = $cell->getCalculatedValue();
                                 $dataArr[$row][$col] = $val;
-
                             }
                         }
                     }
-                    foreach($dataArr as $val){
-                        echo $val['0'];
-                    }
 
-                } else {
-                    $this->addFlash('warning', 'Kies een excel bestand.');
+                    
+                    foreach($dataArr as $val){
+                        var_dump($val);
+                       /* $orderdate = $val[0];
+                        $region = $val[1];
+                        $rep = $val[2];
+                        $item = $val[3];
+                        $units = $val[4];
+                        $unitcost = $val[5];
+                        $total = $val[6];
+
+
+                        $conn->insert('salesorders', array(
+                            "orderdate"     => $orderdate,
+                            "region"     => $region,
+                            "rep"     => $rep,
+                            "item"     => $item,
+                            "units"     => $units,
+                            "unit_cost"     => $unitcost,
+                            "total"     => $total,
+                        ));*/
+                    }
+                    die;
+                    return $this->redirectToRoute('overview');
+                }
+                else {
+                    $this->addFlash('danger', 'Ongeldig bestand! Probeer .xls of .xlsx');
                 }
             }
             else {
-                $this->addFlash('warning', 'Geen bestand geselecteerd!');
+                $this->addFlash('danger', 'Geen bestand geselecteerd!');
             }
+
         }
         return $this->render('default/import.html.twig');
     }

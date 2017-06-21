@@ -20,7 +20,6 @@
                         <li><a data-toggle="tab" href="#menu2">Rep</a></li>
                         <li><a data-toggle="tab" href="#menu3">Region</a></li>
                     </ul>
-
                     <div class="tab-content">
                         <div id="home" class="tab-pane fade in active">
                             <table class="table table-bordered">
@@ -35,46 +34,37 @@
                                     <th>Total</th>
                                 </tr>
                                 </thead>
-                                <tr>
-                                    <td>4-7-2017</td>
-                                    <td>3</td>
-                                    <td>1</td>
-                                    <td>4</td>
-                                    <td>62</td>
-                                    <td>4,99</td>
-                                    <td>309,98</td>
-                                </tr>
-                                <tr>
-                                    <td>21-7-2017</td>
-                                    <td>1</td>
-                                    <td>8</td>
-                                    <td>20</td>
-                                    <td>55</td>
-                                    <td>12,49</td>
-                                    <td>686,56</td>
-                                </tr>
-                                <tr>
-                                    <td>7-8-2017</td>
-                                    <td>1</td>
-                                    <td>2</td>
-                                    <td>22</td>
-                                    <td>42</td>
-                                    <td>23,95</td>
-                                    <td>1000,95</td>
-                                </tr>
+                                {% for salesorder in salesorders %}
+
+                                    <tr>
+                                        <td>{{ salesorder.orderdate }}</td>
+                                        <td>{{ salesorder.region }}</td>
+                                        <td>{{ salesorder.rep }}</td>
+                                        <td>{{ salesorder.item }}</td>
+                                        <td>{{ salesorder.units }}</td>
+                                        <td>{{ salesorder.unitCost }}</td>
+                                        <td>{{ salesorder.total }}</td>
+                                    </tr>
+                                {% endfor %}
                             </table>
                         </div>
                         <div id="menu1" class="tab-pane fade">
-                            <h3>Menu 1</h3>
-                            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                            {% for item in items %}
+
+
+                            {% endfor %}
                         </div>
                         <div id="menu2" class="tab-pane fade">
-                            <h3>Menu 2</h3>
-                            <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+                            {% for reps in rep %}
+
+
+                            {% endfor %}
                         </div>
                         <div id="menu3" class="tab-pane fade">
-                            <h3>Menu 3</h3>
-                            <p>Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+                            {% for regions in region %}
+
+
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
