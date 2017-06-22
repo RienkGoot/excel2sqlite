@@ -45,7 +45,7 @@ class ImportController extends Controller
                         // create table foreach worksheet
                         $worksheetTitle = $worksheet->getTitle();
                         //$titles = $worksheet->rangeToArray('A1:' . $worksheet->getHighestColumn() ."1");
-                        $sql = "CREATE TABLE $worksheetTitle(PRIMARY KEY (ID), ID int NOT NULL)";
+                        $sql = "CREATE TABLE $worksheetTitle(PRIMARY KEY (ID), ID int NOT NULL AUTO_INCREMENT)";
                         $stmt = $conn->prepare($sql);
                         $stmt->execute();
 
@@ -75,8 +75,16 @@ class ImportController extends Controller
                             $sql = "ALTER TABLE $worksheetTitle ADD $test varchar(255)";
                             $stmt = $conn->prepare($sql);
                             $stmt->execute();
+                        foreach($dataArr as $val){
+
+                            $sql = "INSERT INTO $worksheetTitle ($test)VALUES ('$val[1]')";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->execute();
 
                         }
+                        }
+
+
                     }
 
                 }
