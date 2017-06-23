@@ -24,6 +24,7 @@ class ImportController extends Controller
      * @Route("import", name="import")
      * @param Request $request
      * @param Connection $conn
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      * @return \Symfony\Component\HttpFoundation\Response
      */
 
@@ -31,22 +32,21 @@ class ImportController extends Controller
     {
         if (isset($_POST["submit"])) {
             if (!empty($_FILES["excelFile"]["tmp_name"])) {
-
-                $file = ($_FILES["excelFile"]["name"]);
-
-                $ext = substr($file, strrpos($file, '.') + 1);
+                $fileName = ($_FILES["excelFile"]["name"]);
+                $ext = substr($fileName, strrpos($fileName, '.') + 1);
                 // Check filetype matches .xlsx or .xls
                 if ($ext == "xlsx" || $ext == "xls") {
-                    $file = $_FILES["excelFile"]["tmp_name"];
-                    $uploadDir = $this->container->getParameter('upload_dir');
-                   
+                    $fileName = $_FILES["excelFile"]["tmp_name"];
+
+                    /*$uploadDir = $this->container->getParameter('upload_dir');
+
                     move_uploaded_file(
                         $_FILES['excelFile']['tmp_name'],
-                        $uploadDir . '/test.xlsx'
-                    );
-                   die;
+                        $uploadDir . '/' .$fileName
+                    );*/
+
                     // Load uploaded file
-                    $objPHPExcel = PHPExcel_IOFactory::load($file);
+                    $objPHPExcel = PHPExcel_IOFactory::load($fileName);
 
                     $dataArr = array();
                     foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
@@ -56,8 +56,7 @@ class ImportController extends Controller
                         $sql = "CREATE TABLE $worksheetTitle(PRIMARY KEY (ID), ID int NOT NULL AUTO_INCREMENT)";
                         $stmt = $conn->prepare($sql);
                         $stmt->execute();
-
-
+                        
                         $highestRow = $worksheet->getHighestRow(); // e.g. 10
                         $highestColumn = $worksheet->getHighestColumn(); // e.g 'F'
                         $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
@@ -80,63 +79,23 @@ class ImportController extends Controller
                         echo '</table>';
 
                     foreach($dataArr[1] as $column){
-
                             $sql = "ALTER TABLE $worksheetTitle ADD $column varchar(255)";
                             $stmt = $conn->prepare($sql);
                             $stmt->execute();
-
                         }
-                        foreach($dataArr as $val){
 
+                        foreach($dataArr as $val){
                             $sql = "INSERT INTO $worksheetTitle (Test, Test1) VALUES ('$val[0]', '$val[1]');";
                             $stmt = $conn->prepare($sql);
                             $stmt->execute();
-
-                        }
-
-                    }
-
-                }
-
-
-                /*$dataArr = array();
-                foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
-
-                    $worksheet = $objPHPExcel->getSheet(0);
-                    $highestRow = $worksheet->getHighestRow(); // e.g. 10
-                    $highestColumn = $worksheet->getHighestColumn(); // e.g 'F'
-                    $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
-
-                    for ($row = 1; $row <= $highestRow; ++$row) {
-                        for ($col = 0; $col < $highestColumnIndex; ++$col) {
-                            $cell = $worksheet->getCellByColumnAndRow($col, $row);
-                            $val = $cell->getCalculatedValue();
-                            $dataArr[$row][$col] = $val;
                         }
                     }
                 }
-                foreach($dataArr as $val){
-
-
-                    $conn->insert('salesorders', array(
-                        "orderdate"     => $val[0],
-                        "region"     => $val[1],
-                        "rep"     => $val[2],
-                        "item"     => $val[3],
-                        "units"     => $val[4],
-                        "unit_cost"     => $val[5],
-                        "total"     => $val[6],
-                    ));
-                }
-                return $this->redirectToRoute('overview');*/
             } else {
                 $this->addFlash('danger', 'Ongeldig bestand! Probeer .xls of .xlsx');
             }
-        } else {
-            $this->addFlash('danger', 'Geen bestand geselecteerd!');
+            return $this->redirectToRoute('overview');
         }
-
-
         return $this->render('default/import.html.twig');
     }
 }
