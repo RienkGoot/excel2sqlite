@@ -15,56 +15,39 @@
                 <!-- Tabs & Table -->
                 <div class="col-md-9">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a data-toggle="tab" href="#home">SalesOrders</a></li>
-                        <li><a data-toggle="tab" href="#menu1">Items</a></li>
-                        <li><a data-toggle="tab" href="#menu2">Rep</a></li>
-                        <li><a data-toggle="tab" href="#menu3">Region</a></li>
+                        {% for tableName in tableNames %}
+                        <li><a data-toggle="tab" href="{{ loop.index }}">{{ tableName.Tables_in_excel2sqlite }}</a></li>
+                        {% endfor %}
+
                     </ul>
                     <div class="tab-content">
                         <div id="home" class="tab-pane fade in active">
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
-                                    <th>OrderDate</th>
-                                    <th>Region</th>
-                                    <th>Rep</th>
-                                    <th>Item</th>
-                                    <th>Units</th>
-                                    <th>Unit Cost</th>
-                                    <th>Total</th>
+                                    {% for columnName in columnNames %}
+                                    <th> {{ columnName.Field }}</th>
+                                    {% endfor %}
                                 </tr>
                                 </thead>
-                                {% for salesorder in salesorders %}
-
+                                {% for queryResult in queryResults %}
                                     <tr>
-                                        <td>{{ salesorder.orderdate }}</td>
-                                        <td>{{ salesorder.region }}</td>
-                                        <td>{{ salesorder.rep }}</td>
-                                        <td>{{ salesorder.item }}</td>
-                                        <td>{{ salesorder.units }}</td>
-                                        <td>{{ salesorder.unitCost }}</td>
-                                        <td>{{ salesorder.total }}</td>
+                                    {% for columnName in queryResult %}
+                                        <td>{{ columnName }}</td>
+                                    {% endfor %}
                                     </tr>
                                 {% endfor %}
                             </table>
+
                         </div>
                         <div id="menu1" class="tab-pane fade">
-                            {% for item in items %}
 
-
-                            {% endfor %}
                         </div>
                         <div id="menu2" class="tab-pane fade">
-                            {% for reps in rep %}
 
-
-                            {% endfor %}
                         </div>
                         <div id="menu3" class="tab-pane fade">
-                            {% for regions in region %}
 
-
-                            {% endfor %}
                         </div>
                     </div>
                 </div>

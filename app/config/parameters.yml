@@ -10,3 +10,4 @@ parameters:
     mailer_user: null
     mailer_password: null
     secret: ThisTokenIsNotSoSecretChangeIt
+    upload_dir: C:/xampp/htdocs/Excel2SQLite/web/uploads

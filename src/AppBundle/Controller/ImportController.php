@@ -33,13 +33,21 @@ class ImportController extends Controller
             if (!empty($_FILES["excelFile"]["tmp_name"])) {
 
                 $file = ($_FILES["excelFile"]["name"]);
+
                 $ext = substr($file, strrpos($file, '.') + 1);
                 // Check filetype matches .xlsx or .xls
                 if ($ext == "xlsx" || $ext == "xls") {
                     $file = $_FILES["excelFile"]["tmp_name"];
-
+                    $uploadDir = $this->container->getParameter('upload_dir');
+                   
+                    move_uploaded_file(
+                        $_FILES['excelFile']['tmp_name'],
+                        $uploadDir . '/test.xlsx'
+                    );
+                   die;
                     // Load uploaded file
                     $objPHPExcel = PHPExcel_IOFactory::load($file);
+
                     $dataArr = array();
                     foreach ($objPHPExcel->getWorksheetIterator() as $worksheet) {
                         // create table foreach worksheet
@@ -48,6 +56,7 @@ class ImportController extends Controller
                         $sql = "CREATE TABLE $worksheetTitle(PRIMARY KEY (ID), ID int NOT NULL AUTO_INCREMENT)";
                         $stmt = $conn->prepare($sql);
                         $stmt->execute();
+
 
                         $highestRow = $worksheet->getHighestRow(); // e.g. 10
                         $highestColumn = $worksheet->getHighestColumn(); // e.g 'F'
@@ -70,20 +79,20 @@ class ImportController extends Controller
                         }
                         echo '</table>';
 
-                    foreach($dataArr[1] as $test){
+                    foreach($dataArr[1] as $column){
 
-                            $sql = "ALTER TABLE $worksheetTitle ADD $test varchar(255)";
+                            $sql = "ALTER TABLE $worksheetTitle ADD $column varchar(255)";
                             $stmt = $conn->prepare($sql);
                             $stmt->execute();
+
+                        }
                         foreach($dataArr as $val){
 
-                            $sql = "INSERT INTO $worksheetTitle ($test)VALUES ('$val[1]')";
+                            $sql = "INSERT INTO $worksheetTitle (Test, Test1) VALUES ('$val[0]', '$val[1]');";
                             $stmt = $conn->prepare($sql);
                             $stmt->execute();
 
                         }
-                        }
-
 
                     }
 

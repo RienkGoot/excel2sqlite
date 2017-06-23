@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\DBAL\Driver\Connection;
 
 /**
  * Class DatabaseOverviewController
@@ -16,20 +17,38 @@ class DatabaseOverviewController extends Controller
     /**
      * @Route("/overview", name="overview")
      * @param Request $request
+     * @param Connection $conn
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction(Request $request)
+    public function indexAction(Request $request, Connection $conn)
     {
-        $salesorders = $this->getDoctrine()->getRepository('AppBundle:SalesOrders')->findAll();
-        $items = $this->getDoctrine()->getRepository('AppBundle:Items')->findAll();
-        $rep = $this->getDoctrine()->getRepository('AppBundle:Rep')->findAll();
-        $region = $this->getDoctrine()->getRepository('AppBundle:Region')->findAll();
+        $sqlAll = "SELECT * FROM Blad1";
+        $stmt = $conn->prepare($sqlAll );
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            $results[] = $row;
+        }
 
-        return $this->render('default/overview.html.twig', array(
-            'salesorders' => $salesorders,
-            'items' => $items,
-            'rep' => $rep,
-            'region' => $region
-        ));
+        $sqlDesc = "DESCRIBE Blad1";
+        $stmt1 = $conn->prepare($sqlDesc );
+        $stmt1->execute();
+        while ($row = $stmt1->fetch()) {
+            $columnNames[] = $row;
+        }
+
+        $sqlTable = "SHOW TABLES";
+        $stmt2 = $conn->prepare($sqlTable );
+        $stmt2->execute();
+        while ($row = $stmt2->fetch()) {
+            $tableNames[] = $row;
+        }
+
+
+        return $this->render('default/overview.html.twig',[
+            'queryResults'=> $results,
+            'columnNames'=> $columnNames,
+            'tableNames'=> $tableNames,
+
+            ]);
     }
 }
