@@ -9,28 +9,20 @@
             </div>
             <div class="panel-body">
                 {% include ('::flash-messages.html.twig') %}
-                {#<form action="#" method="post" enctype="multipart/form-data">
-                    Selecteer Excel bestand:
-                    <input type="file" onchange="$('#upload-file-info').html(this.files[0].name)" accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="excelFile" id="excelFile">
-                    <button  name="submit" type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-upload"></span> Importeren</button>
-                </form>#}
                 <div class="col-lg-6 col-sm-6 col-12">
                     <h4>Importeren</h4>
                     <form action="#" method="post" enctype="multipart/form-data">
                         <div class="input-group">
+                            <input type="text" class="form-control" id="upload-file-info" readonly>
                             <label class="input-group-btn">
-                    <span class="btn btn-primary">
-                        Bladeren&hellip; <input type="file" style="display: none;" accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="excelFile" id="excelFile" >
-                    </span>
+                                <span class="btn btn-default">
+                                 Bladeren&hellip; <input onchange="$('#upload-file-info').val($(this).val());" type="file" style="display: none;" accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" name="excelFile" id="excelFile" >
+                                </span>
+                                <button  name="submit" type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-upload"></span> Importeren</button>
                             </label>
-                            <input type="text" class="form-control" readonly>
                         </div>
-                        <button  name="submit" type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-upload"></span> Importeren</button>
                     </form>
-
-                    <span class="help-block">
-                Selecteer een Excel bestand om te importeren.
-            </span>
+                    <span class="help-block">Selecteer een Excel bestand (.xls of .xlsx) om te importeren.</span>
                 </div>
             </div>
         </div>

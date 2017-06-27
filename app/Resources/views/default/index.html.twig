@@ -13,26 +13,32 @@
             <div class="panel-body">
                 <h4 class="text-center">Overzicht</h4>
                 <hr>
+                {% if fileinfo is defined %}
                 <table class="table table-bordered">
                     <thead>
                     <tr>
                         <th>Naam</th>
                         <th>Datum</th>
+                        <th>Grootte</th>
                         <th>Acties</th>
                     </tr>
                     </thead>
                     <tr>
-                        {% if fileinfo is defined %}
-                            <td>{{ fileinfo }}</td>
-                            <td>{{ filedate }}</td>
+                        <td>{{ fileinfo }}</td>
+                        <td>{{ filedate }}</td>
+                        <td>{{ filesize }} Bytes</td>
                         <td>
-                            <a><i class="glyphicon glyphicon-download"></i></a>
+                            <a href="{{ path('sqlite_download') }}"><i class="glyphicon glyphicon-download"></i></a>
                             <a href="{{ path('overview') }}"><i class="glyphicon glyphicon-eye-open"></i></a>
                             <a href="{{ path('sqlite_delete') }}"><i class="glyphicon glyphicon-remove"></i></a>
                         </td>
-                        {% endif %}
                     </tr>
                 </table>
+                {% else %}
+                    <div class="alert alert-warning">
+                        <p class="text-center">Nog geen database beschikbaar! Importeer een excel bestand.</p>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

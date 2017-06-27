@@ -3,14 +3,11 @@
 namespace AppBundle\Controller;
 
 use PHPExcel_Cell;
-use PHPExcel_Cell_DataType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use PHPExcel;
 use PHPExcel_IOFactory;
 use Doctrine\DBAL\Driver\Connection;
-
 
 /**
  * Class ImportController
