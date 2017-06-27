@@ -36,7 +36,11 @@ class ImportController extends Controller
                 $ext = substr($fileName, strrpos($fileName, '.') + 1);
                 // Check filetype matches .xlsx or .xls
                 if ($ext == "xlsx" || $ext == "xls") {
+
                     $fileName = $_FILES["excelFile"]["tmp_name"];
+                    $fileSize = filesize($fileName);
+                    $session = $request->getSession();
+                    $session->set('size', $fileSize);
 
                     /*$uploadDir = $this->container->getParameter('upload_dir');
 
@@ -53,48 +57,44 @@ class ImportController extends Controller
                         // create table foreach worksheet
                         $worksheetTitle = $worksheet->getTitle();
                         //$titles = $worksheet->rangeToArray('A1:' . $worksheet->getHighestColumn() ."1");
-                        $sql = "CREATE TABLE $worksheetTitle(PRIMARY KEY (ID), ID int NOT NULL AUTO_INCREMENT)";
+
+                        $sql = "CREATE TABLE $worksheetTitle(ID integer PRIMARY KEY)";
                         $stmt = $conn->prepare($sql);
                         $stmt->execute();
-                        
+
                         $highestRow = $worksheet->getHighestRow(); // e.g. 10
                         $highestColumn = $worksheet->getHighestColumn(); // e.g 'F'
                         $highestColumnIndex = PHPExcel_Cell::columnIndexFromString($highestColumn);
-                        $nrColumns = ord($highestColumn) - 64;
-                        echo "<br>The worksheet " . $worksheetTitle . " has ";
-                        echo $nrColumns . ' columns (A-' . $highestColumn . ') ';
-                        echo ' and ' . $highestRow . ' row.';
-                        echo '<br>Data: <table border="1"><tr>';
                         for ($row = 1; $row <= $highestRow; ++$row) {
-                            echo '<tr>';
                             for ($col = 0; $col < $highestColumnIndex; ++$col) {
                                 $cell = $worksheet->getCellByColumnAndRow($col, $row);
                                 $val = $cell->getCalculatedValue();
-                                $dataType = PHPExcel_Cell_DataType::dataTypeForValue($val);
-                                echo '<td>' . $val . '<br>(Typ ' . $dataType . ')</td>';
                                 $dataArr[$row][$col] = $val;
                             }
-                            echo '</tr>';
                         }
-                        echo '</table>';
 
-                    foreach($dataArr[1] as $column){
-                            $sql = "ALTER TABLE $worksheetTitle ADD $column varchar(255)";
+                        foreach($dataArr[1] as $column){
+                            $sql = "ALTER TABLE $worksheetTitle ADD COLUMN $column BLOB";
                             $stmt = $conn->prepare($sql);
                             $stmt->execute();
                         }
 
                         foreach($dataArr as $val){
                             $sql = "INSERT INTO $worksheetTitle (Test, Test1) VALUES ('$val[0]', '$val[1]');";
+                        }
                             $stmt = $conn->prepare($sql);
                             $stmt->execute();
-                        }
+
                     }
+                    return $this->redirectToRoute('overview');
                 }
-            } else {
-                $this->addFlash('danger', 'Ongeldig bestand! Probeer .xls of .xlsx');
+
+                else {
+                    $this->addFlash('danger', 'Ongeldig bestand! Probeer .xls of .xlsx');
+                }
+
             }
-            return $this->redirectToRoute('overview');
+
         }
         return $this->render('default/import.html.twig');
     }

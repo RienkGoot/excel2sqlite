@@ -7,7 +7,7 @@
             <div class="panel-heading">
                 <h3 class="panel-title">Database overzicht</h3>
                 <div class="pull-right button-panel">
-                    <a href="{{ path('homepage') }}" class="btn btn-sm btn-default" ><span class="glyphicon glyphicon-home"></span> Home</a>
+                    <a href="{{ path('overview_delete') }}" class="btn btn-sm btn-default" ><span class="glyphicon glyphicon-home"></span> Home</a>
                     <a href="" data-toggle="modal" data-target="#myModal" class="btn btn-sm btn-default" ><span class="glyphicon glyphicon-transfer"></span> Query uitvoeren</a>
                 </div>
             </div>
@@ -20,11 +20,15 @@
                         {% endfor %}
 
                     </ul>
+
                     <div class="tab-content">
-                        <div id="home" class="tab-pane fade in active">
+                        {% for tableName in tableNames %}
+                        <div id="{{ loop.index }}" class="tab-pane fad0e in active">
+                            {% endfor %}
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
+
                                     {% for columnName in columnNames %}
                                     <th> {{ columnName.Field }}</th>
                                     {% endfor %}
@@ -40,25 +44,16 @@
                             </table>
 
                         </div>
-                        <div id="menu1" class="tab-pane fade">
-
-                        </div>
-                        <div id="menu2" class="tab-pane fade">
-
-                        </div>
-                        <div id="menu3" class="tab-pane fade">
-
-                        </div>
                     </div>
+
                 </div>
 
                 <!-- Info sidebar -->
                 <div class="col-md-3">
                     <br><br>
                     <ul class="list-group">
-                        <li class="list-group-item">Grootte: 20kb</li>
-                        <li class="list-group-item">Tabellen: 4</li>
-                        <li class="list-group-item">Velden: 21</li>
+                        <li class="list-group-item">Grootte: {{ app.session.get('size') }} Bytes</li>
+                        <li class="list-group-item">Tabellen: {{ columnNames|length }}</li>
                     </ul>
                 </div>
 
@@ -78,10 +73,13 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-sm-4">
+                                <form action="#" method="post">
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">Nieuwe tabel</label>
-                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="[tabel]">
+                                    <label for="newTable">Nieuwe tabel</label>
+                                    <input type="text" class="form-control" name="newTable" id="newTable" placeholder="[tabelnaam]">
                                 </div>
+                                    <button type="submit" class="btn btn-default">Opslaan</button>
+                                </form>
                             </div>
                             <div class="col-sm-4">
 
@@ -109,7 +107,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Opslaan</button>
+                        <button type="submit" class="btn btn-default">Opslaan</button>
                     </div>
                 </div>
 
