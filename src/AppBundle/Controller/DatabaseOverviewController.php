@@ -55,4 +55,21 @@ class DatabaseOverviewController extends Controller
 
         ]);
     }
+
+    /**
+     * @Route("/overview/delete", name="overview_delete")
+     * Remove all session data
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function overviewDeleteAction(Request $request)
+    {
+        $session = $request->getSession();
+        if($session->has('size')) {
+            $session->clear();
+        }
+
+        return $this->redirectToRoute('homepage');
+    }
+
 }

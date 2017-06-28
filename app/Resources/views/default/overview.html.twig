@@ -3,12 +3,13 @@
 {% block body %}
 
     <div class="container">
+        <!-- Database overview panel -->
         <div class="panel panel-primary panel-center">
             <div class="panel-heading">
                 <h3 class="panel-title">Database overzicht</h3>
                 <div class="pull-right button-panel">
-                    <a href="{{ path('homepage') }}" class="btn btn-sm btn-default" ><span class="glyphicon glyphicon-home"></span> Home</a>
-                    <a href="" data-toggle="modal" data-target="#myModal" class="btn btn-sm btn-default" ><span class="glyphicon glyphicon-transfer"></span> Query uitvoeren</a>
+                    <a href="{{ path('overview_delete') }}" class="btn btn-sm btn-default" ><span class="glyphicon glyphicon-home"></span> Home</a>
+                    <a  data-toggle="collapse" data-target="#demo" class="btn btn-sm btn-default" ><span class="glyphicon glyphicon-transfer"></span> Query uitvoeren</a>
                 </div>
             </div>
             <div class="panel-body">
@@ -58,63 +59,16 @@
                     </ul>
                 </div>
 
-            </div>
-        </div>
+                <!-- Query Field -->
+            <div id="demo" class="collapse">
 
-        <!-- Modal -->
-        <div id="myModal" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-lg">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Query uitvoeren</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <form action="#" method="post">
-                                <div class="form-group">
-                                    <label for="newTable">Nieuwe tabel</label>
-                                    <input type="text" class="form-control" name="newTable" id="newTable" placeholder="[tabelnaam]">
-                                </div>
-                                    <button type="submit" class="btn btn-default">Opslaan</button>
-                                </form>
-                            </div>
-                            <div class="col-sm-4">
-
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1">Selecteer tabel:</label>
-                                    <select  class="form-control">
-
-                                        <option>SalesOrders</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
-                                    </select><br>
-                                    <label for="exampleInputEmail1">Voer data in:</label>
-                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="[data]">
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label for="exampleInputEmail1">Query</label>
-                                    <input type="email" class="form-control" id="exampleInputEmail1" placeholder="CREATE VIEW test... ">
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-default">Opslaan</button>
-                    </div>
+                <div class="col-md-12">
+                    <hr>
+                    <div class="well well-lg">Large Well</div>
                 </div>
-
             </div>
         </div>
-
+        </div>
     </div>
     <script type="text/javascript" src="{{ asset('js/jquery-3.2.1.min.js') }}"></script>
 {% endblock %}
