@@ -56,26 +56,32 @@ class ImportController extends Controller
                                 $dataArr[$row][$col] = $val;
                             }
                         }
+                        $columnArr = array();
                         foreach ($dataArr[1] as $column) {
-                            $sql = "ALTER TABLE $worksheetTitle ADD COLUMN $column BLOB";
+
+                           $sql = "ALTER TABLE $worksheetTitle ADD COLUMN $column BLOB";
                             $stmt = $conn->prepare($sql);
                             $stmt->execute();
+                            $columnArr[] = array($column);
+
+                        }
+                        $columnArray = array();
+                        for ($i = 0; $i < count($columnArr); $i++) {
+                            $columnArray[] = implode(',', $columnArr[$i]);
                         }
 
+                        foreach ($dataArr as $val) {
 
-                            foreach ($dataArr as $val) {
-                                foreach ($dataArr[1] as $column) {
+                            $sql = "INSERT INTO $worksheetTitle ('" . implode("','", array_values($columnArray)) . "') VALUES ('" . implode("','", array_values($val)) . "');";
 
+                            $stmt = $conn->prepare($sql);
+                            $stmt->execute();
 
-                                    $sql = "INSERT INTO $worksheetTitle (Test, Test1) VALUES ('".implode("','",array_values($val))."');";
-                                    $stmt = $conn->prepare($sql);
-                                    $stmt->execute();
-                                }
-                            }
+                        }
+
                     }
                     return $this->redirectToRoute('overview');
-                }
-                else {
+                } else {
                     $this->addFlash('danger', 'Ongeldig bestand! Probeer .xls of .xlsx');
                 }
             }
