@@ -17,11 +17,15 @@ class FileOverviewController extends Controller
 {
     /**
      * @Route("/", name="homepage")
-     * Scans specified directory for any files and outputs filename and date.
+     * Scans specified directory for any files and outputs filename, filesize and date.
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction()
+    public function overviewScanAction()
     {
+        /**
+         * Check if file exist and get filesize,
+         * filename and date.
+         */
         $dir = $this->container->getParameter('upload_dir');
         $file = $this->container->getParameter('database_path');
 
@@ -49,9 +53,18 @@ class FileOverviewController extends Controller
      */
     public function overviewDeleteAction(Request $request)
     {
+        /**
+         * If file exists, remove it from the directory and
+         * clear all sessions.
+         */
         $file = $this->container->getParameter('database_path');
+
         if (file_exists($file)) {
             unlink($file);
+            $session = $request->getSession();
+            if($session->has('size')) {
+                $session->clear();
+            }
         }
         return $this->redirect($request->headers->get('referer'));
     }
@@ -64,7 +77,11 @@ class FileOverviewController extends Controller
      */
     public function overviewDownloadAction(Request $request)
     {
+        /**
+         * If file exist, download specified file from the browser.
+         */
         $file = $this->container->getParameter('database_path');
+
         if (file_exists($file)) {
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');

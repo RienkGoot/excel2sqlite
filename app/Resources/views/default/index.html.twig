@@ -29,9 +29,9 @@
                         <td>{{ filedate }}</td>
                         <td>{{ filesize }} Bytes</td>
                         <td>
-                            <a href="{{ path('sqlite_download') }}"><i class="glyphicon glyphicon-download"></i></a>
-                            <a href="{{ path('overview') }}"><i class="glyphicon glyphicon-eye-open"></i></a>
-                            <a href="{{ path('sqlite_delete') }}"><i class="glyphicon glyphicon-remove"></i></a>
+                            <a class='btn btn-primary btn-xs' href="{{ path('sqlite_download') }}"><i class="glyphicon glyphicon-download"></i> Download</a>
+                            <a class='btn btn-primary btn-xs' href="{{ path('overview') }}"><i class="glyphicon glyphicon-eye-open"></i> Bekijk</a>
+                            <a class='btn btn-primary btn-xs' href="{{ path('sqlite_delete') }}"><i class="glyphicon glyphicon-remove"></i> Verwijder</a>
                         </td>
                     </tr>
                 </table>

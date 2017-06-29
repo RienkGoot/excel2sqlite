@@ -17,59 +17,112 @@ class DatabaseOverviewController extends Controller
     /**
      * @Route("/overview", name="overview")
      * Fetches tablename, tablecolumns and tabledata.
-     * @param Request $request
      * @param Connection $conn
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function indexAction(Request $request, Connection $conn)
+    public function indexAction(Connection $conn)
     {
-        // Show all and get existing tables
+        /**
+         * Get tablenames from database and put them into
+         * an array.
+         */
         $sqlTable = "SELECT * FROM sqlite_master";
-        $stmt2 = $conn->prepare($sqlTable );
-        $stmt2->execute();
-        while ($row = $stmt2->fetch()) {
+        $stmt = $conn->prepare($sqlTable);
+        $stmt->execute();
+        $tableArr = array();
+        while ($row = $stmt->fetch()) {
             $tableNames = $row['name'];
+            $tableArr[] = array($tableNames);
+        }
 
-                // Select all data from database table
-                $sqlAll = "SELECT * FROM $tableNames";
-                $stmt = $conn->prepare($sqlAll);
-                $stmt->execute();
-                while ($row = $stmt->fetch()) {
-                    $results[] = $row;
-                }
+        /**
+         * Count amount of tables and implode into tableArray.
+         */
+        $tableArray = array();
+        for ($i = 0; $i < count($tableArr); $i++) {
+            $tableArray[] = implode(',', $tableArr[$i]);
+        }
 
-                // Describe table to get column names
-                $sqlDesc = "PRAGMA table_info($tableNames)";
-                $stmt1 = $conn->prepare($sqlDesc);
-                $stmt1->execute();
-                while ($row = $stmt1->fetch()) {
-                    $columnNames[] = $row['name'];
+        /**
+         * Select all data from database table
+         */
+        $sqlAll = "SELECT * FROM ('" . implode("','", array_values($tableArray)) . "')";
+        $stmt = $conn->prepare($sqlAll);
+        $stmt->execute();
+        while ($row = $stmt->fetch()) {
+            $results[] = $row;
+        }
 
-                }
+        /**
+         * Get column names from each table.
+         */
+        foreach ($tableArr as $tableArray){
+            $sqlCol = "PRAGMA table_info('" . implode("','", array_values($tableArray)) . "')";
+            $stmt = $conn->prepare($sqlCol);
+            $stmt->execute();
+            while ($row = $stmt->fetch()) {
+                $columnNames[] = $row['name'];
             }
+        }
 
         return $this->render('default/overview.html.twig',[
             'queryResults'=> $results,
             'columnNames'=> $columnNames,
-            'tableNames'=> $tableNames,
-
+            'tableNames'=> $tableArray,
         ]);
     }
 
     /**
-     * @Route("/overview/delete", name="overview_delete")
-     * Remove all session data
+     * @Route("/overview/query/custom", name="query_custom")
+     * Function that creates a custom query by user input.
      * @param Request $request
+     * @param Connection $conn
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function overviewDeleteAction(Request $request)
+    public function queryCustomAction(Request $request, Connection $conn)
     {
-        $session = $request->getSession();
-        if($session->has('size')) {
-            $session->clear();
-        }
+        if ($request->getMethod() == Request::METHOD_POST) {
 
-        return $this->redirectToRoute('homepage');
+            /**
+             * Get form data from request and filter out the bad words.
+             * If no bad words found execute query.
+             */
+            $query = $request->request->get('name');
+            $badWords = array("/delete/", "/drop/", "/truncate/");
+            if ($query == preg_replace($badWords, "", $query)) {
+                $sql = "$query";
+                $stmt = $conn->prepare($sql);
+                $stmt->execute();
+            } else {
+                return $this->redirect($request->headers->get('referer'));
+            }
+        }
+        return $this->redirect($request->headers->get('referer'));
     }
 
+    /**
+     * @Route("/overview/query/view", name="query_view")
+     * Function that creates a new sql view.
+     * @param Request $request
+     * @param Connection $conn
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function queryViewAction(Request $request, Connection $conn)
+    {
+        if ($request->getMethod() == Request::METHOD_POST){
+
+            /**
+             * Get form data from the request and put variables into the
+             * prepared query.
+             */
+            $view = $request->request->get('view');
+            $column = $request->request->get('column');
+            $worksheet = $request->request->get('worksheet');
+
+            $sql = "CREATE VIEW $view AS SELECT  $column FROM $worksheet";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+        }
+        return $this->redirect($request->headers->get('referer'));
+    }
 }
