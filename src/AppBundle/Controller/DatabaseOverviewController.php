@@ -26,13 +26,13 @@ class DatabaseOverviewController extends Controller
          * Get tablenames from database and put them into
          * an array.
          */
-        $sqlTable = "SELECT * FROM sqlite_master";
-        $stmt = $conn->prepare($sqlTable);
+        $stmt = $conn->prepare("SELECT * FROM sqlite_master");
         $stmt->execute();
         $tableArr = array();
         while ($row = $stmt->fetch()) {
             $tableNames = $row['name'];
             $tableArr[] = array($tableNames);
+
         }
 
         /**
@@ -46,30 +46,44 @@ class DatabaseOverviewController extends Controller
         /**
          * Select all data from database table
          */
-        $sqlAll = "SELECT * FROM ('" . implode("','", array_values($tableArray)) . "')";
-        $stmt = $conn->prepare($sqlAll);
+       /* $stmt = $conn->prepare("SELECT * FROM ('" . implode("','", array_values($tableArray)) . "')");
         $stmt->execute();
         while ($row = $stmt->fetch()) {
             $results[] = $row;
-        }
+        }*/
 
-        /**
-         * Get column names from each table.
-         */
-        foreach ($tableArr as $tableArray){
-            $sqlCol = "PRAGMA table_info('" . implode("','", array_values($tableArray)) . "')";
-            $stmt = $conn->prepare($sqlCol);
-            $stmt->execute();
-            while ($row = $stmt->fetch()) {
-                $columnNames[] = $row['name'];
-            }
-        }
+       foreach($tableArray as $tableNames){
 
-        return $this->render('default/overview.html.twig',[
-            'queryResults'=> $results,
-            'columnNames'=> $columnNames,
-            'tableNames'=> $tableArray,
-        ]);
+           $tableheader = false;
+           $stmt = $conn->prepare("SELECT * FROM ($tableNames)");
+           $stmt->execute();
+
+
+           echo "<table class='table table-bordered'>";
+           while ($row = $stmt->fetch()) {
+               if($tableheader == false) {
+                   echo '<tr>';
+                   foreach($row as $key=>$value) {
+                       echo "<th>{$key}</th>";
+                   }
+                   echo '</tr>';
+                   $tableheader = true;
+               }
+               echo "<tr>";
+
+               foreach($row as $value) {
+                   echo "<td>{$value}</td>";
+
+               }
+               echo "</tr>";
+
+           }
+           echo "</table>";
+           echo "</div>";
+
+       }
+
+        return $this->render('default/overview.html.twig', ['items'=> $value]);
     }
 
     /**
@@ -90,8 +104,7 @@ class DatabaseOverviewController extends Controller
             $query = $request->request->get('name');
             $badWords = array("/delete/", "/drop/", "/truncate/");
             if ($query == preg_replace($badWords, "", $query)) {
-                $sql = "$query";
-                $stmt = $conn->prepare($sql);
+                $stmt = $conn->prepare($query);
                 $stmt->execute();
             } else {
                 return $this->redirect($request->headers->get('referer'));
@@ -119,8 +132,7 @@ class DatabaseOverviewController extends Controller
             $column = $request->request->get('column');
             $worksheet = $request->request->get('worksheet');
 
-            $sql = "CREATE VIEW $view AS SELECT  $column FROM $worksheet";
-            $stmt = $conn->prepare($sql);
+            $stmt = $conn->prepare("CREATE VIEW $view AS SELECT  $column FROM $worksheet");
             $stmt->execute();
         }
         return $this->redirect($request->headers->get('referer'));
