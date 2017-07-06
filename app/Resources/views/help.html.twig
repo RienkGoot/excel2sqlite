@@ -1,0 +1,44 @@
+<!-- Query help block -->
+<div id="helpModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Help bij query uitvoeren.</h4>
+            </div>
+            <div class="modal-body">
+                <p>Met een query wordt in de informatica een opdracht bedoeld
+                    die aan een database wordt gegeven om een bepaalde actie uit te voeren, die ook potentieel
+                    gegevens teruggeeft.
+                </p>
+                <hr>
+                <ul class="nav nav-tabs" id="tabContent">
+                    <li class="active"><a href="#create" data-toggle="tab">Create</a></li>
+                    <li><a href="#insert" data-toggle="tab">Insert</a></li>
+                    <li><a href="#select" data-toggle="tab">Select</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="create">
+                        <p>Met create maak je een nieuwe tabel met kolommen aan.</p>
+                        <code>CREATE TABLE telefoonboek(naam text, nummer integer)</code>
+                    </div>
+                    <div class="tab-pane" id="insert">
+                        <p>Insert betekent invoegen, hiermee kan je data invoeren in een kolom.</p>
+                        <code>INSERT INTO telefoonboek (naam, nummer) VALUES ('Piet Janssens', '555-1212')</code>
+                    </div>
+                    <div class="tab-pane" id="select">
+                        <p>Gegevens uit een tabel selecteren.</p>
+                        <code>SELECT naam, nummer FROM telefoonboek</code>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="https://nl.wikipedia.org/wiki/SQL" target="_blank" class="pull-left">Meer info..</a>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Terug</button>
+            </div>
+        </div>
+    </div>
+</div>

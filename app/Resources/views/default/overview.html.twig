@@ -14,44 +14,16 @@
                 </div>
             </div>
             <div class="panel-body">
+                {% include ('::flash-messages.html.twig') %}
 
-                <!-- Tabs & Table -->
-                <div class="col-md-8">
-                    <ul class="nav nav-tabs">
-                        {% for tableName in tableNames %}
-                            <li class="active"><a data-toggle="tab" href="{{ tableName|join(', ') }}">{{ tableName|join(', ') }}</a></li>
-                        {% endfor %}
-                    </ul>
-                    <div class="tab-content">
-                        {% for tableName in tableNames %}
-                        <div id="{{ tableName|join(', ') }}" class="tab-pane fade in active">
-                            {% endfor %}
-                            <table class="table table-bordered">
-                                <thead>
-                                <tr>
-                                    {% for columnName in columnNames %}
-                                        <th> {{ columnName }}</th>
-                                    {% endfor %}
-                                </tr>
-                                </thead>
-                                {% for queryResult in queryResults %}
-                                    <tr>
-                                        {% for columnName in queryResult %}
-                                            <td>{{ columnName }}</td>
-                                        {% endfor %}
-                                    </tr>
-                                {% endfor %}
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                <div class="col-md-4 pull-left">
+                    <br>
 
                 <!-- Info sidebar -->
-                <div class="col-md-3">
-                    <br><br>
                     <ul class="list-group">
                         <li class="list-group-item">Grootte: {{ app.session.get('size') }} Bytes</li>
-                        <li class="list-group-item">Tabellen: {{ columnNames|length }}</li>
+                        <li class="list-group-item">Tabellen: {{ columns|length }}</li>
+                        <li class="list-group-item">Velden: {{ columns|length * data|length / 2 }}</li>
                     </ul>
                 </div>
 
@@ -64,33 +36,40 @@
                         <div class="col-md-6">
                             <div class="well well-lg">
                                 <form class="form-horizontal" action="{{ path('query_view') }}" method="post">
+
+                                    <!-- View name -->
                                     <div class="form-group">
                                         <label class="col-md-4 control-label" for="name">View naam</label>
                                         <div class="col-md-5">
                                             <input id="view" name="view" type="text" placeholder="[Viewnaam]" class="form-control input-md">
                                         </div>
                                     </div>
+
+                                    <!-- Column selection -->
                                     <div class="form-group">
                                         <label class="col-md-4 control-label" for="column">Kolom</label>
                                         <div class="col-md-5">
                                             <select id="column" name="column" class="form-control">
-                                                {% for columnName in columnNames %}
-                                                    <option value="{{ columnName }}">{{ columnName }}</option>
+                                                {% for col in columns %}
+                                                    <option value="{{ col }}">{{ col }}</option>
                                                 {% endfor %}
                                             </select>
                                         </div>
                                     </div>
+
+                                    <!-- Worksheet selection -->
                                     <div class="form-group">
-                                        <label class="col-md-4 control-label" for="worksheet">Werkblad</label>
+                                        <label class="col-md-4 control-label" for="column">Werkblad</label>
                                         <div class="col-md-5">
                                             <select id="worksheet" name="worksheet" class="form-control">
-                                                {% for tableName in tableNames %}
-                                                    <option value="{{ tableName|join(', ') }}">{{ tableName|join(', ') }}</option>
+                                                {% for table in tables %}
+                                                    <option value="{{ table }}">{{ table }}</option>
                                                 {% endfor %}
                                             </select>
-                                            <span class="help-block">Maak hiermee een nieuwe view.</span>
+                                            <br>
                                             <button  name="submit" type="submit" class="btn btn-primary">Uitvoeren</button>
                                         </div>
+
                                     </div>
                                 </form>
                             </div>
@@ -102,19 +81,20 @@
                                 <form class="form-horizontal" action="{{ path('query_custom') }}" method="post">
                                     <div class="form-group">
                                         <label class="col-md-4 control-label" for="name">Custom Query</label>
-                                        <div class="col-md-6">
+                                        <div class="col-md-8">
                                             <div class="input-group">
                                                 <span class="input-group-addon"><i class="glyphicon glyphicon-tasks"></i></span>
                                                 <input id="name" name="name" type="text" placeholder="bijv. Create Table" class="form-control input-md">
                                             </div>
                                             <span class="help-block">Uitvoeren van eigen query.</span>
                                             <button  name="submit" type="submit" class="btn btn-primary">Uitvoeren</button>
+                                            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#helpModal"><i class="glyphicon glyphicon-info-sign"></i> Help</button>
                                         </div>
                                     </div>
                                 </form>
                             </div>
+                            {% include ('help.html.twig') %}
                         </div>
-
                     </div>
                 </div>
             </div>

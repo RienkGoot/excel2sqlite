@@ -54,8 +54,7 @@ class ImportController extends Controller
                          * table with ID primary key.
                          */
                         $worksheetTitle = $worksheet->getTitle();
-                        $sql = "CREATE TABLE $worksheetTitle(ID integer PRIMARY KEY)";
-                        $stmt = $conn->prepare($sql);
+                        $stmt = $conn->prepare("CREATE TABLE IF NOT EXISTS $worksheetTitle(ID integer PRIMARY KEY)");
                         $stmt->execute();
 
                         /**
@@ -79,8 +78,7 @@ class ImportController extends Controller
                          */
                         $columnArr = array();
                         foreach ($dataArr[1] as $column) {
-                           $sql = "ALTER TABLE $worksheetTitle ADD COLUMN $column BLOB";
-                            $stmt = $conn->prepare($sql);
+                            $stmt = $conn->prepare("ALTER TABLE $worksheetTitle ADD COLUMN $column BLOB");
                             $stmt->execute();
                             $columnArr[] = array($column);
                         }
@@ -99,8 +97,7 @@ class ImportController extends Controller
                          */
                         unset($dataArr[1]);
                         foreach ($dataArr as $val) {
-                            $sql = "INSERT INTO $worksheetTitle ('" . implode("','", array_values($columnArray)) . "') VALUES ('" . implode("','", array_values($val)) . "');";
-                            $stmt = $conn->prepare($sql);
+                            $stmt = $conn->prepare("INSERT INTO $worksheetTitle ('" . implode("','", array_values($columnArray)) . "') VALUES ('" . implode("','", array_values($val)) . "');");
                             $stmt->execute();
                         }
                     }

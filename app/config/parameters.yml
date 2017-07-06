@@ -10,5 +10,5 @@ parameters:
     mailer_user: null
     mailer_password: null
     secret: ThisTokenIsNotSoSecretChangeIt
-    upload_dir: "%kernel.project_dir%/var/data/"
-    database_path: "%kernel.project_dir%/var/data/data.sqlite"
+    upload_dir: "%kernel.project_dir%/var/data/"                # Upload directory
+    database_path: "%kernel.project_dir%/var/data/excel.sqlite"  # Path of the database

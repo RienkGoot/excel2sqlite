@@ -36,6 +36,18 @@ class DatabaseOverviewController extends Controller
         }
 
         /**
+         * Get column names from each table.
+         */
+        foreach ($tableArr as $tableArray){
+            $sqlCol = "PRAGMA table_info('" . implode("','", array_values($tableArray)) . "')";
+            $stmt = $conn->prepare($sqlCol);
+            $stmt->execute();
+            while ($row = $stmt->fetch()) {
+                $columnNames[] = $row['name'];
+            }
+        }
+
+        /**
          * Count amount of tables and implode into tableArray.
          */
         $tableArray = array();
@@ -44,46 +56,47 @@ class DatabaseOverviewController extends Controller
         }
 
         /**
-         * Select all data from database table
+         * Select all data from database and put it in html table.
+         * TODO: Giving data to twig and creating html table didn't work yet,
+         * TODO: could solve it. That's the reason I echo the table in the controller.
          */
-       /* $stmt = $conn->prepare("SELECT * FROM ('" . implode("','", array_values($tableArray)) . "')");
-        $stmt->execute();
-        while ($row = $stmt->fetch()) {
-            $results[] = $row;
-        }*/
 
-       foreach($tableArray as $tableNames){
+        foreach($tableArray as $tableNames){
 
-           $tableheader = false;
-           $stmt = $conn->prepare("SELECT * FROM ($tableNames)");
-           $stmt->execute();
+            $tableheader = false;
+            $stmt = $conn->prepare("SELECT * FROM ($tableNames)");
+            $stmt->execute();
 
+            echo "<div class='col-sm-4'> <table class='table table-bordered table-custom'>";
 
-           echo "<table class='table table-bordered'>";
-           while ($row = $stmt->fetch()) {
-               if($tableheader == false) {
-                   echo '<tr>';
-                   foreach($row as $key=>$value) {
-                       echo "<th>{$key}</th>";
-                   }
-                   echo '</tr>';
-                   $tableheader = true;
-               }
-               echo "<tr>";
+            while ($row = $stmt->fetch()) {
 
-               foreach($row as $value) {
-                   echo "<td>{$value}</td>";
+                if($tableheader == false) {
+                    echo "<th>$tableNames</th>";
+                    echo '<tr>';
 
-               }
-               echo "</tr>";
+                    foreach($row as $key=>$value) {
+                        echo "<th>{$key}</th>";
+                    }
+                    echo '</tr>';
+                    $tableheader = true;
+                }
+                echo "<tr>";
 
-           }
-           echo "</table>";
-           echo "</div>";
+                foreach($row as $value) {
+                    echo "<td>{$value}</td>";
+                }
+                echo "</tr>";
+                $data[] = $row;
+            }
+            echo "</table>";
+            echo "</div></div>";
 
-       }
-
-        return $this->render('default/overview.html.twig', ['items'=> $value]);
+        }
+        return $this->render('default/overview.html.twig', [
+            'data' => $data,
+            'columns' => $columnNames,
+            'tables' => $tableArray]);
     }
 
     /**
@@ -107,6 +120,7 @@ class DatabaseOverviewController extends Controller
                 $stmt = $conn->prepare($query);
                 $stmt->execute();
             } else {
+                $this->addFlash('danger', 'Query niet geldig!');
                 return $this->redirect($request->headers->get('referer'));
             }
         }
